@@ -1,0 +1,91 @@
+<!-- 
+    WritWender v0.1
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="libkatze.js"></script>
+        <script type="text/javascript" src="https://rawcdn.githack.com/nextapps-de/winbox/0.2.0/dist/winbox.bundle.js"></script> <!-- We need WinBox for the about window since I've already gone through so much trouble, and don't want to make my own WM right now -->
+        <link rel="stylesheet" href="wender.ui.css"></link>
+        <script type="text/javascript">
+            function setFont(fonttype){document.getElementById("editor").style.fontWeight=fonttype;}
+            function alignText(alignmnt){document.getElementById("editor").style.textAlign=alignmnt;}
+            
+            function aboutInfo() { //Function for the about window
+                new WinBox("About", {
+                    url: window.location.href + "about.html",
+                    x: "center",
+                    y: "center",
+                    width: "50%",
+                    height: "80%"
+                });
+            }
+            
+            function openFile() {
+                d.getElementById("openFileChooser").click(); //Using workaround by having a button trigger an invisible input element
+            };
+            
+            function saveFile() { //Use libkatze to save the filename and content into the user's localStorage
+                katze.mkLsKey("wwSaveState", d.getElementById("editor").value);
+                katze.mkLsKey("wwFileName", d.getElementById("filename").value);
+                alert("Data has been saved locally to the browser.");
+            }
+            
+            function downloadFile() { //This has caused me so much pain to add, anyways in libkatze, we use the svStrAFl function to save a string as a file, then workaround blob limitations by yet again, triggering an invisible attribute.
+                katze.svStrAFl(d.getElementById("editor").value)
+                d.getElementById("realDownloadFileButton").href = txtbloburl;
+                d.getElementById("realDownloadFileButton").download = d.getElementById("filename").value
+                d.getElementById("realDownloadFileButton").click();
+            }
+        </script>
+    </head>
+    <body>
+        <div id="writ-fileRow"> <!-- the top part of the ui -->
+            <button id="openFileButton" onclick='openFile()'>Open</button>
+            <button id="saveFileButton" onclick='saveFile()'>Save</button>
+            <button id="downloadFileButton" onclick='downloadFile()'>Download</button>
+            <a style="display: none;" id="realDownloadFileButton" download="null" href="null"></a>
+            <input id="filename" type="text" value=""></input>
+            <button id="fontNormal" onclick='setFont("")'>Normal</button>
+            <button id="fontBold" onclick='setFont("bold")'>Bold</button>
+            <button id="alignLeft" onclick='alignText("left")'>Align Left</button>
+            <button id="alignCenter" onclick='alignText("center")'>Center Text</button>
+            <button id="alignRight" onclick='alignText("right")'>Align Right</button>
+            <button id="aboutButton" onclick="aboutInfo()">About</button>
+        </div>
+            <br/>
+        <div id="writ-editor"> <!-- rest of the ui -->   
+            <textarea id="editor" rows="0" columns="0" value="">
+            </textarea>
+        </div>
+            <script type="text/javascript">
+                editordata = document.getElementById("editor").value //Check our settings in the user's localStorage for saved content
+                d.getElementById("filename").value = katze.rdLsKey("wwFileName")
+                d.getElementById("editor").value = katze.rdLsKey("wwSaveState")
+            </script>
+            <input id="openFileChooser" type="file" style="display: none;"></input> <!-- work around for openFile -->
+            <script type="text/javascript">
+                d.getElementById("openFileChooser").addEventListener('change', function() {
+                    var filer = new FileReader();
+                        filer.onload = function() {
+                            d.getElementById("editor").value = filer.result; //Set the cat of a chosen file as the value of our editor
+                        }
+                        filer.readAsText(this.files[0]);
+                        d.getElementById("filename").value = this.files[0].name; //Get filename and set it as the value of filename element
+                    })
+            </script>
+    </body>
+</html>
