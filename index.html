@@ -1,5 +1,5 @@
 <!-- 
-    WritWender v0.1
+    WritWender v0.2
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as
@@ -15,14 +15,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <script type="text/javascript" src="libkatze.js"></script>
         <script type="text/javascript" src="https://rawcdn.githack.com/nextapps-de/winbox/0.2.0/dist/winbox.bundle.js"></script> <!-- We need WinBox for the about window since I've already gone through so much trouble, and don't want to make my own WM right now -->
         <link rel="stylesheet" href="wender.ui.css"></link>
+        <link rel="shortcut icon" type="image/png" href="favicon.png">
         <script type="text/javascript">
-            function setFont(fonttype){document.getElementById("editor").style.fontWeight=fonttype;}
-            function alignText(alignmnt){document.getElementById("editor").style.textAlign=alignmnt;}
+            function setFont(fonttype){document.getElementById("editor").style.fontWeight=fonttype;} //Function for setting fontWeight
+            function alignText(alignmnt){document.getElementById("editor").style.textAlign=alignmnt;} //Function for aligning
             
             function aboutInfo() { //Function for the about window
                 new WinBox("About", {
@@ -36,7 +37,7 @@
             
             function openFile() {
                 d.getElementById("openFileChooser").click(); //Using workaround by having a button trigger an invisible input element
-            };
+            }
             
             function saveFile() { //Use libkatze to save the filename and content into the user's localStorage
                 katze.mkLsKey("wwSaveState", d.getElementById("editor").value);
@@ -51,8 +52,12 @@
                 d.getElementById("realDownloadFileButton").click();
                 katze.clearSSAFBlob();
             }
+            
+            function shiftFont() {
+                var sftmp = d.getElementById("fontSizeOfEditor").value
+                d.getElementById("editor").style.fontSize = sftmp + "px"
+            }
         </script>
-        <title>WritWender</title>
     </head>
     <body>
         <div id="writ-fileRow"> <!-- the top part of the ui -->
@@ -61,11 +66,13 @@
             <button id="downloadFileButton" onclick='downloadFile()'>Download</button>
             <a style="display: none;" id="realDownloadFileButton" download="null" href="null"></a>
             <input id="filename" type="text" value=""></input>
-            <button id="fontNormal" onclick='setFont("")'>Normal</button>
-            <button id="fontBold" onclick='setFont("bold")'>Bold</button>
+            <button id="fontNormal" onclick='setFont("")' style="fontWeight: none; width: 30px;">N</button>
+            <button id="fontBold" onclick='setFont("bold")' style="fontWeight: bold; width: 30px">B</button>
             <button id="alignLeft" onclick='alignText("left")'>Align Left</button>
             <button id="alignCenter" onclick='alignText("center")'>Center Text</button>
             <button id="alignRight" onclick='alignText("right")'>Align Right</button>
+            <input id="fontSizeOfEditor" type="text" value="12"></input>
+            <button id="shiftFont" onclick="shiftFont()">Shift Size</button>
             <button id="aboutButton" onclick="aboutInfo()">About</button>
         </div>
             <br/>

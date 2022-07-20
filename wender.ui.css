@@ -13,12 +13,20 @@ body {
 
 writ-fileRow {
     justify-content: left;
+    position: absolute;
 }
 
 #filename {
     background-color: black;
     color: white;
     border: none;
+}
+
+#fontSizeOfEditor {
+    background-color: black;
+    color: white;
+    border: none;
+    width: 5%;
 }
 
 button {
